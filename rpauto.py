@@ -35,10 +35,16 @@ bmark_stamp=str(datetime.now())
 bmark_name=congrp+'_'+bmark_stamp
 #I don't like spaces
 bmark_name=bmark_name.replace(" ",'')
-''' This command is terrible and doesn't work. Pass JSON params. fix soon.
--H "Content-Type: application/json" -X POST -d '{"bookmarkName":"TEST", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"2108804154"}]}'
-'''
-payload={"bookmarkName":"ERP", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"859504091"}]}
-header = {'Content-Type': 'application/json'}
-re=requests.post('https://192.168.128.128/fapi/rest/4_0/settings/groups/actions/create_bookmark', params=payload, headers=header ,auth=('admin','admin'), verify=False)
-print(re)
+
+# -H "Content-Type: application/json" -X POST -d '{"bookmarkName":"TEST", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"2108804154"}]}
+payload={"bookmarkName":"ERP2", "consistencyType":"ConsistencyUnknown", "consolidationPolicy":"NoConsolidation", "groups":[{"id":"1859504091"}]}
+header = {'content-type':'application/json'}
+# This request works!
+re=requests.post('https://192.168.128.128/fapi/rest/4_0/settings/groups/actions/create_bookmark', data=json.dumps(payload), headers=header ,auth=('admin','admin'), verify=False)
+print(re.text,re)
+
+#first, let's find that ERP2 test bookmark I created
+req=requests.get('https://192.168.128.128/fapi/rest/4_0/settings/groups/%s/snapshots' % cg_guid, auth=('admin','admin'), verify=False)
+search_req=json.loads(req.text)
+
+print(req.text,req)
