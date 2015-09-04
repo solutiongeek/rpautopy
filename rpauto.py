@@ -24,13 +24,21 @@ while search_r[count]['name'] != congrp:
   count += 1
 
 cg_guid = search_r[count]['groupUID']['id']
+#added clusterUID var for later when we need it for image access mode
+#clus_uid= search_r[count]['clusterUID']
 ##just to be sure!
 print (cg_guid, search_r[count]['name'])
+#, clus_uid)
 
 #now to create a bookmark!
 bmark_stamp=str(datetime.now())
 bmark_name=congrp+'_'+bmark_stamp
 #I don't like spaces
 bmark_name=bmark_name.replace(" ",'')
-# This command is terrible and doesn't work. Pass JSON params. fix soon.
-r=requests.post('https://192.168.128.128/fapi/rest/4_0/settings/groups/actions/create_bookmark',auth=('admin','admin'), verify=False, groups=(cg_guid),bookmarkname=bmark_name)
+''' This command is terrible and doesn't work. Pass JSON params. fix soon.
+-H "Content-Type: application/json" -X POST -d '{"bookmarkName":"TEST", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"2108804154"}]}'
+'''
+payload={"bookmarkName":"ERP", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"859504091"}]}
+header = {'Content-Type': 'application/json'}
+re=requests.post('https://192.168.128.128/fapi/rest/4_0/settings/groups/actions/create_bookmark', params=payload, headers=header ,auth=('admin','admin'), verify=False)
+print(re)
