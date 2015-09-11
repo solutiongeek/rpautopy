@@ -9,8 +9,8 @@ import argparse
 user="admin"
 password="admin"
 rpip="192.168.128.129"
-congrp="ERP"
-target_site="NY Copy"
+congrp="Test"
+target_site="Tgt"
 ''' this is for later
 def iterateJSON(json_obj):
     object=json.loads(json_obj)
@@ -72,9 +72,10 @@ req=requests.get('https://' + rpip +'/fapi/rest/4_1/groups/' + cg_guid +'/snapsh
 print(req.text,req)
 req=json.loads(req.text)
 count=0
-while req['copiesSnapshots'][0]['snapshots'][count]['description'] != bmark_name:
+while req['copiesSnapshots'][0]['snapshots'][0]['description'] != bmark_name:
     print (req['copiesSnapshots'][0]['snapshots'][count]['description'])
     count += 1
+
 ss_uid=req['copiesSnapshots'][0]['snapshots'][count]['snapshotUID']
 ss_desc=req['copiesSnapshots'][0]['snapshots'][count]['description']
 ss_cts=req['copiesSnapshots'][0]['snapshots'][count]['closingTimeStamp']
@@ -100,3 +101,5 @@ if enabled>-1:
 #command to disable image access mode
 #command works, commented out for demo
 #reques=requests.put('https://'+rpip+'/fapi/rest/4_1/groups/'+cg_guid+'/clusters/'+clus_uid+'/copies/'+copy_uid+'/disable_image_access', auth=(user,password), verify=False)
+#the command above also pauses replication between sites. Need to resume.
+#resume=requests.put('https://'+rpip+'/fapi/rest/4_1/groups/'+cg_guid+'/start_transfer/', auth=(user,password), verify=False)
