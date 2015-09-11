@@ -6,8 +6,8 @@ import datetime
 from datetime import datetime
 import argparse
 # Phase 1 - Authentication (user/password/ip/CG are defaults for RP Simulator)
-user="admin"
-password="admin"
+user="user"
+password="password"
 rpip="192.168.128.129"
 congrp="Test"
 target_site="Tgt"
