@@ -4,35 +4,47 @@ import requests
 import json
 import datetime
 from datetime import datetime
+import argparse
 # Phase 1 - Authentication (user/password/ip/CG are defaults for RP Simulator)
 user="admin"
 password="admin"
 rpip="192.168.128.129"
-congrp="ERP"
+congrp="ELP"
+target_site="NY Copy"
+
+#
+
+
 #test to check RPA state
 #response=requests.get("http://%s/fapi/rest/4_0/state/rpas/all" % rpip, auth=(user,password))
 #print (response)
 #response=requests.post("http://%s/fapi/rest/4_0/settings/groups/actions/create_bookmarks",params=)
 
 #find the guid of the consistency group we want
-r=requests.get('https://192.168.128.129/fapi/rest/4_1/groups/settings/',auth=('admin','admin'), verify=False)
+r=requests.get('https://%s/fapi/rest/4_1/groups/settings/' % rpip, auth=(user,password), verify=False)
 
 #turn the response text into json and search it for the CG we want Why did this break in 4.1???
 search_r=json.loads(r.text)
 count = 0
 while search_r['innerSet'][count]['name'] != congrp:
-  print (search_r['innerSet'][count]['name'])
-  count += 1
+    print (search_r['innerSet'][count]['name'])
+    count += 1
+cg_guid = search_r['innerSet'][count]['groupUID']['id']
+#it's a real pain to find the right clusterUID in all of this JSON
+#start at the target site
+ts_index=r.text.find(target_site)
+#find clusterUID under Target site
+cuid_index=r.text.find('clusterUID',ts_index)
+id_index=r.text.find('id',cuid_index)
+end_index=r.text.find('}',id_index)
+clus_uid= r.text[id_index:end_index]
 
-cg_guid = 34688008     #search_r[count]['groupUID']['id']
-#added clusterUID var for later when we need it for image access mode
-clus_uid= search_r['innerSet'][count]['clusterUID']
-copy_uid= search_r['innerSet'][count]['copyUID']
+#this does not work
+#copy_uid= search_r['innerSet'][count]['copyUID']
 ##just to be sure!
-print (cg_guid, search_r[count]['name'], clus_uid, copy_uid)
-#, clus_uid)
+#print (search_r['innerSet'][count]['name'],cg_guid, clus_uid, copy_uid)
 
-#now to create a bookmark!
+#now to create a unique bookmark!
 bmark_stamp=str(datetime.now())
 bmark_name=congrp+'_'+bmark_stamp
 #I don't like spaces
@@ -40,7 +52,7 @@ bmark_name=bmark_name.replace(" ",'')
 
 #THIS WORKS!
 # -H "Content-Type: application/json" -X POST -d '{"bookmarkName":"TEST", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"2108804154"}]}
-payload={"bookmarkName":"ERP3", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"34688008"}]}
+payload={"bookmarkName":"%s", "consistencyType":"CONSISTENCY_UNKNOWN", "consolidationPolicy":"NEVER_CONSOLIDATE", "groups":[{"id":"%s"}] % congrp, cg_guid}
 header = {'content-type':'application/json'}
 # This request works!
 re=requests.post('https://192.168.128.129/fapi/rest/4_1/groups/bookmarks', data=json.dumps(payload), headers=header ,auth=('admin','admin'), verify=False)
