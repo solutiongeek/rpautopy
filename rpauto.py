@@ -5,12 +5,15 @@ import json
 import datetime
 from datetime import datetime
 import argparse
+#import XtremIOsnaps
+#from XtremIOsnaps import *
 # Phase 1 - Authentication (user/password/ip/CG are defaults for RP Simulator)
-user="user"
-password="password"
+user="admin"
+password="admin"
 rpip="192.168.128.129"
-congrp="Test"
-target_site="Tgt"
+congrp="MelissaTest"
+target_site="MelissaTgt"
+
 ''' this is for later
 def iterateJSON(json_obj):
     object=json.loads(json_obj)
@@ -64,14 +67,15 @@ payload={"bookmarkName": bmark_name, "consistencyType":"CONSISTENCY_UNKNOWN", "c
 header = {'content-type':'application/json'}
 # This request works!
 re=requests.post('https://'+ rpip +'/fapi/rest/4_1/groups/bookmarks', data=json.dumps(payload), headers=header ,auth=(user, password), verify=False)
-print(re.text,re)
+print(re)
 
 ##THIS REQUEST WORKS
 #first, let's find that ERP2 test bookmark I created
 req=requests.get('https://' + rpip +'/fapi/rest/4_1/groups/' + cg_guid +'/snapshots', auth=(user,password), verify=False)
-print(req.text,req)
+print(req)
 req=json.loads(req.text)
 count=0
+
 while req['copiesSnapshots'][0]['snapshots'][0]['description'] != bmark_name:
     print (req['copiesSnapshots'][0]['snapshots'][count]['description'])
     count += 1
@@ -97,6 +101,8 @@ reque=requests.get('https://'+rpip+'/fapi/rest/4_1/groups/'+cg_guid+'/state', au
 enabled=reque.text.find("LOGGED_ACCESS")
 if enabled>-1:
         print ("Access Enabled!")
+
+
 
 #command to disable image access mode
 #command works, commented out for demo
