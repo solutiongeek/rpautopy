@@ -8,11 +8,11 @@ import argparse
 #import XtremIOsnaps
 #from XtremIOsnaps import *
 # Phase 1 - Authentication (user/password/ip/CG are defaults for RP Simulator)
-user="admin"
-password="admin"
-rpip="10.28.64.80"
-congrp="MelissaTest"
-target_site="MelissaTgt"
+user=""
+password=""
+rpip=""
+congrp="Test"
+target_site="Tgt"
 #
 req=requests.get('https://%s/fapi/rest/4_1/groups/settings/' % rpip, auth=(user,password), verify=False)
 
