@@ -8,9 +8,9 @@ import argparse
 #import XtremIOsnaps
 #from XtremIOsnaps import *
 # Phase 1 - Authentication (user/password/ip/CG are defaults for RP Simulator)
-user="admin"
-password="admin"
-rpip="192.168.128.129"
+user=""
+password=""
+rpip=""
 congrp="MelissaTest"
 target_site="MelissaTgt"
 
